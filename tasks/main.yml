@@ -1,0 +1,41 @@
+---
+
+- name: manage swap file entry in fstab
+  mount:
+    name: none
+    src: "{{ swap_file_path }}"
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: present
+
+- name: ensure swap file exists
+  command: >
+    {{ swap_file_create_command }}
+    creates='{{ swap_file_path }}'
+  register: swap_file_create
+  when: ansible_virtualization_type != 'lxc'
+
+- name: set permissions on swap file
+  file:
+    path: "{{ swap_file_path }}"
+    owner: root
+    group: root
+    mode: 0600
+  when: ansible_virtualization_type != 'lxc'
+
+- name: make swap file if necessary
+  command: mkswap {{ swap_file_path }}
+  when: swap_file_create is changed and ansible_virtualization_type != 'lxc'
+  register: mkswap_result
+
+- name: run swapon on the swap file
+  command: swapon {{ swap_file_path }}
+  when: mkswap_result is changed and ansible_virtualization_type != 'lxc'
+
+- name: set swappiness
+  sysctl:
+    name: vm.swappiness
+    value: "{{ swap_swappiness }}"
+    state: present
