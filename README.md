@@ -14,8 +14,6 @@ Swap management (partition/file, fstab, sysctl)
 
 ### Main
 
-Short description here.
-
 | Param | Default | Description |
 | -------- | -------- | -------- |
 | `swap_file_path` | `/swapfile` | Path to swap file |
@@ -28,7 +26,6 @@ Short description here.
 
 ## Useful links
 
-- [Official documentation](https://placeholder)
 - [Our article](https://oss.help/kb785)
 
 ## TODO
